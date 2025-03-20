@@ -12,6 +12,10 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 
+//Joe's implementation of helper functions
+int addHelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2);
+int LCM(int a, int b);
+
 int main()
 {
     //this c-string, or array of 8 characters, ends with the null terminating character '\0'
@@ -103,7 +107,47 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
     result[8] = '6';
     result[9] = '\0';
 
+    
+
+    
+
+
+
     return true;
+}
+
+int addHelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2) {
+    int newDenomenator = LCM(denominator1, denominator2);
+    int mult1 = newDenomenator / denominator1;
+    int mult2 = newDenomenator / denominator2;
+
+    numerator1 *= mult1;
+    numerator2 *= mult2;
+
+    return numerator1 + numerator2;
+
+}
+
+int LCM(int a, int b) {
+    int greater;
+    int smaller;
+
+    if(a >= b) {
+        greater = a;
+        smaller = b;
+    }
+    else {
+        greater = b;
+        smaller = a;
+    }
+
+    int add = greater;
+    
+    while(greater % smaller != 0) {
+        greater += add;
+    }
+
+    return greater;
 }
 //--
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
