@@ -13,7 +13,7 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 
 //Joe's implementation of helper functions
-int addHelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2);
+int HelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2);
 int LCM(int a, int b);
 
 int main()
@@ -107,16 +107,25 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
     result[8] = '6';
     result[9] = '\0';
 
-    
+    int finDenominator = LCM(d1, d2);
 
-    
+    int finNumerator = HelperMantissa(d1, n1, d2, n2) + ((c1 + c2) * finDenominator);
+
+    if(finNumerator % finDenominator == 0) {
+        int finResult = finNumerator / finDenominator;
+        int divisor = 10;
+        for(int i = 0; i < (int)(finResult / 10); i++) {
+
+            result[i] = '0' + 
+        }
+    }
 
 
 
     return true;
 }
 
-int addHelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2) {
+int HelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2) {
     int newDenomenator = LCM(denominator1, denominator2);
     int mult1 = newDenomenator / denominator1;
     int mult2 = newDenomenator / denominator2;
