@@ -46,12 +46,12 @@ int main()
 
     //initialize the values
     c1 = 1;
-    n1 = 0;
-    d1 = 1;
+    n1 = 1;
+    d1 = 2;
 
     c2 = 2;
-    n2 = 0;
-    d2 = 1; 
+    n2 = 2;
+    d2 = 3; 
 
     
 
@@ -115,16 +115,32 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 
     int finNumerator = HelperMantissa(d1, n1, d2, n2) + ((c1 + c2) * finDenominator);
 
-    if(finNumerator % finDenominator == 0) {
-        int finResult = finNumerator / finDenominator;
-        int resultSize = numSize(finResult);
-        for(int i = resultSize; i > 0; i--) {
-            result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
-        }
 
-        result[resultSize] = '\0';
+    int finResult = finNumerator / finDenominator;
+    int resultSize = numSize(finResult);
+    for(int i = resultSize; i > 0; i--) {
+        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
     }
 
+
+    if(finNumerator % finDenominator == 0) {
+        result[resultSize] = '\0';
+    }
+    else {
+        result[resultSize] = '.';
+
+        int mantissaStart = resultSize + 1;
+
+        resultSize = len - (resultSize + 2);
+        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
+        finResult %= pow(10, resultSize);
+        cout << finResult << endl;
+        for(int i = 0; i < resultSize; i++) {
+            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
+        }
+
+        result[mantissaStart + resultSize] = '\0';
+    }
 
 
     return true;
