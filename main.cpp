@@ -134,6 +134,11 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 
     int finResult = finNumerator / finDenominator;
     int resultSize = numSize(finResult);
+
+    if(resultSize >= len) {
+        return false;
+    }
+
     for(int i = resultSize; i > 0; i--) {
         result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
     }
@@ -151,6 +156,9 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
         finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
         finResult %= pow(10, resultSize);
         for(int i = 0; i < resultSize; i++) {
+            if((finResult / pow(10, (resultSize - 1) - i) % 10) == '0') {
+                break;
+            }
             result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
         }
 
@@ -173,6 +181,7 @@ int HelperMantissa(int denominator1, int numerator1, int denominator2, int numer
         return numerator2 + numerator1;
     else if(sign == '-')
         return numerator1 - numerator2;
+    
 
 }
 
@@ -231,11 +240,15 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 
     int finResult = finNumerator / finDenominator;
     int resultSize = numSize(finResult);
-    cout << finResult << endl;
+
+    if(resultSize >= len) {
+
+        return false;
+    }
+
     for(int i = resultSize; i > 0; i--) {
         result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
     }
-
 
     if(finNumerator % finDenominator == 0) {
         result[resultSize] = '\0';
@@ -249,6 +262,9 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
         finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
         finResult %= pow(10, resultSize);
         for(int i = 0; i < resultSize; i++) {
+            if((finResult / pow(10, (resultSize - 1) - i) % 10) == '0') {
+                break;
+            }
             result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
         }
 
@@ -262,6 +278,13 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 {
     //hard coded return value to make the code compile
     //you will have to come up with an algorithm to multiply the two numbers
+
+    int finNumerator = ((c1 * d1) + n1) * ((c2 * d2) + n2);
+    int finDenominator = d1 * d2;
+
+
+
+
     return true;
 }
 //--
