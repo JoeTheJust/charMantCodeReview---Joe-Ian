@@ -47,11 +47,11 @@ int main()
     //initialize the values
     c1 = 1;
     n1 = 0;
-    d1 = 0;
+    d1 = 1;
 
     c2 = 2;
     n2 = 0;
-    d2 = 0; 
+    d2 = 1; 
 
     
 
@@ -112,19 +112,17 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
     // result[9] = '\0';
 
     int finDenominator = LCM(d1, d2);
-    cout << finDenominator << endl;
 
     int finNumerator = HelperMantissa(d1, n1, d2, n2) + ((c1 + c2) * finDenominator);
-    cout << finNumerator << endl;
 
     if(finNumerator % finDenominator == 0) {
         int finResult = finNumerator / finDenominator;
         int resultSize = numSize(finResult);
         for(int i = resultSize; i > 0; i--) {
-            result[resultSize - i] = (finResult / pow(10, i - 1) % 10);
+            result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
         }
 
-        result[resultSize + 1] = '\0';
+        result[resultSize] = '\0';
     }
 
 
