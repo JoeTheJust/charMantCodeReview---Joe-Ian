@@ -67,14 +67,14 @@ int main()
         cout<<"Error on add"<<endl;
     }
 
-    c1 = 24;
-    n1 = 3;
-    d1 = 4;
+    c1 = 5;
+    n1 = 1;
+    d1 = 2;
 
 
-    c2 = 4;
-    n2 = 4;
-    d2 = 5;
+    c2 = 3;
+    n2 = 1;
+    d2 = 4;
 
     if(subtract(c1, n1, d1, c2, n2, d2, answer, 10)) {
         cout<<"Answer: "<<answer<<endl;
@@ -150,7 +150,6 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
         resultSize = len - (resultSize + 2);
         finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
         finResult %= pow(10, resultSize);
-        cout << finResult << endl;
         for(int i = 0; i < resultSize; i++) {
             result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
         }
@@ -173,7 +172,7 @@ int HelperMantissa(int denominator1, int numerator1, int denominator2, int numer
     if(sign == '+')
         return numerator2 + numerator1;
     else if(sign == '-')
-        return numerator2 - numerator1;
+        return numerator1 - numerator2;
 
 }
 
@@ -249,7 +248,6 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
         resultSize = len - (resultSize + 2);
         finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
         finResult %= pow(10, resultSize);
-        cout << finResult << endl;
         for(int i = 0; i < resultSize; i++) {
             result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
         }
