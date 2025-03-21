@@ -15,6 +15,8 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
 //Joe's implementation of helper functions
 int HelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2);
 int LCM(int a, int b);
+int pow(int base, int exp);
+int numSize(int num);
 
 int main()
 {
@@ -44,12 +46,14 @@ int main()
 
     //initialize the values
     c1 = 1;
-    n1 = 1;
-    d1 = 2;
+    n1 = 0;
+    d1 = 0;
 
     c2 = 2;
-    n2 = 2;
-    d2 = 3; 
+    n2 = 0;
+    d2 = 0; 
+
+    
 
     //if the c-string can hold at least the characteristic
     if(add(c1, n1, d1, c2, n2, d2, answer, 10))
@@ -57,22 +61,22 @@ int main()
         //display string with answer 4.1666666 (cout stops printing at the null terminating character)
         cout<<"Answer: "<<answer<<endl;
     }
-    else
-    {
-        //display error message
-        cout<<"Error on add"<<endl;
-    }
+    // else
+    // {
+    //     //display error message
+    //     cout<<"Error on add"<<endl;
+    // }
 
-    if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on divide"<<endl;
-    }
+    // if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
+    // {
+    //     //display string with answer
+    //     cout<<"Answer: "<<answer<<endl;
+    // }
+    // else
+    // {
+    //     //display error message
+    //     cout<<"Error on divide"<<endl;
+    // }
 
     return 0;
 } 
@@ -96,28 +100,31 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
     //you will have to come up with an algorithm to add the two numbers
     //hard coded return value to make the main() work
-    result[0] = '4';
-    result[1] = '.';
-    result[2] = '1';
-    result[3] = '6';
-    result[4] = '6';
-    result[5] = '6';
-    result[6] = '6';
-    result[7] = '6';
-    result[8] = '6';
-    result[9] = '\0';
+    // result[0] = '4';
+    // result[1] = '.';
+    // result[2] = '1';
+    // result[3] = '6';
+    // result[4] = '6';
+    // result[5] = '6';
+    // result[6] = '6';
+    // result[7] = '6';
+    // result[8] = '6';
+    // result[9] = '\0';
 
     int finDenominator = LCM(d1, d2);
+    cout << finDenominator << endl;
 
     int finNumerator = HelperMantissa(d1, n1, d2, n2) + ((c1 + c2) * finDenominator);
+    cout << finNumerator << endl;
 
     if(finNumerator % finDenominator == 0) {
         int finResult = finNumerator / finDenominator;
-        int divisor = 10;
-        for(int i = 0; i < (int)(finResult / 10); i++) {
-
-            result[i] = '0' + 
+        int resultSize = numSize(finResult);
+        for(int i = resultSize; i > 0; i--) {
+            result[resultSize - i] = (finResult / pow(10, i - 1) % 10);
         }
+
+        result[resultSize + 1] = '\0';
     }
 
 
@@ -158,6 +165,26 @@ int LCM(int a, int b) {
 
     return greater;
 }
+
+int pow(int base, int exp) {
+    int num = 1;
+    for(int i = 0; i < exp; i++) {
+        num *= base;
+    }
+
+    return num;
+}
+
+int numSize(int num) {
+    int retVal = 0;
+    while(num > 0) {
+        num /= 10;
+        retVal++;
+    }
+
+    return retVal;
+}
+
 //--
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
