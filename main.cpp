@@ -13,11 +13,12 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 
 //Joe's implementation of helper functions
-int HelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2, char sign);
+int AddSubtractHelper(int denominator1, int numerator1, int denominator2, int numerator2, char sign);
 int MultDivHelper(int characteristic, int numerator, int denominator);
 int LCM(int a, int b);
 int pow(int base, int exp);
 int numSize(int num);
+void resetResult(char result[], int len);
 
 int main()
 {
@@ -95,6 +96,13 @@ int main()
         cout << "Error on subtract" << endl;
     }
 
+    if(multiply(c1, n1, d1, c2, n2, d2, answer, 10)) {
+        cout<<"Answer: "<<answer<<endl;
+    }
+    else {
+        cout << "Error on multiply" << endl;
+    }
+
     return 0;
 } 
 //--
@@ -128,9 +136,11 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
     // result[8] = '6';
     // result[9] = '\0';
 
+    resetResult(result, len);
+
     int finDenominator = LCM(d1, d2);
 
-    int finNumerator = HelperMantissa(d1, n1, d2, n2, '+') + ((c1 + c2) * finDenominator);
+    int finNumerator = AddSubtractHelper(d1, n1, d2, n2, '+') + ((c1 + c2) * finDenominator);
 
 
     int finResult = finNumerator / finDenominator;
@@ -157,7 +167,7 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
         finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
         finResult %= pow(10, resultSize);
         for(int i = 0; i < resultSize; i++) {
-            if((finResult / pow(10, (resultSize - 1) - i) % 10) == '0') {
+            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
                 break;
             }
             result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
@@ -170,7 +180,125 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
     return true;
 }
 
-int HelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2, char sign) {
+//--
+bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
+{
+    //hard coded return value to make the code compile
+    //you will have to come up with an algorithm to subtract the two numbers
+
+    resetResult(result, len);
+
+
+    int finDenominator = LCM(d1, d2);
+
+    int finNumerator = AddSubtractHelper(d1, n1, d2, n2, '-') + ((c1 - c2) * finDenominator);
+
+
+    int finResult = finNumerator / finDenominator;
+    int resultSize = numSize(finResult);
+
+    if(resultSize >= len) {
+
+        return false;
+    }
+
+    for(int i = resultSize; i > 0; i--) {
+        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
+    }
+
+    if(finNumerator % finDenominator == 0) {
+        result[resultSize] = '\0';
+    }
+    else {
+        result[resultSize] = '.';
+
+        int mantissaStart = resultSize + 1;
+
+        resultSize = len - (resultSize + 2);
+        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
+        finResult %= pow(10, resultSize);
+        for(int i = 0; i < resultSize; i++) {
+            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
+                break;
+            }
+            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
+        }
+
+        result[mantissaStart + resultSize] = '\0';
+    }
+
+    return true;
+}
+//--
+bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
+{
+    //hard coded return value to make the code compile
+    //you will have to come up with an algorithm to multiply the two numbers
+
+    resetResult(result, len);
+
+    int firstNumerator = MultDivHelper(c1, n1, d1);
+    int secondNumerator = MultDivHelper(c2, n2, d2);
+
+    int finDenominator = d1 * d2;
+    int finNumerator = firstNumerator * secondNumerator;
+
+    int finResult = finNumerator / finDenominator;
+    int resultSize = numSize(finResult);
+
+    if(resultSize >= len) {
+
+        return false;
+    }
+
+    for(int i = resultSize; i > 0; i--) {
+        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
+    }
+
+    if(finNumerator % finDenominator == 0) {
+        result[resultSize] = '\0';
+    }
+    else {
+        result[resultSize] = '.';
+
+        int mantissaStart = resultSize + 1;
+
+        resultSize = len - (resultSize + 2);
+        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
+        finResult %= pow(10, resultSize);
+        for(int i = 0; i < resultSize; i++) {
+            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
+                break;
+            }
+            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
+        }
+
+        result[mantissaStart + resultSize] = '\0';
+    }
+
+
+    return true;
+}
+//--
+bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
+{
+    //you will have to come up with an algorithm to divide the two numbers
+    //hard coded return value to make the main() work
+
+    resetResult(result, len);
+
+    result[0] = '0';
+    result[1] = '.';
+    result[2] = '5';
+    result[3] = '6';
+    result[4] = '2';
+    result[5] = '5';
+    result[6] = '\0';
+    
+    return true;
+}
+
+int AddSubtractHelper(int denominator1, int numerator1, int denominator2, int numerator2, char sign) {
     int newDenomenator = LCM(denominator1, denominator2);
     int mult1 = newDenomenator / denominator1;
     int mult2 = newDenomenator / denominator2;
@@ -231,79 +359,9 @@ int numSize(int num) {
     return retVal;
 }
 
-//--
-bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
-{
-    //hard coded return value to make the code compile
-    //you will have to come up with an algorithm to subtract the two numbers
 
-
-    int finDenominator = LCM(d1, d2);
-
-    int finNumerator = HelperMantissa(d1, n1, d2, n2, '-') + ((c1 - c2) * finDenominator);
-
-
-    int finResult = finNumerator / finDenominator;
-    int resultSize = numSize(finResult);
-
-    if(resultSize >= len) {
-
-        return false;
+void resetResult(char result[], int len) {
+    for(int i = 0; i < len; i++) {
+        result[i] = ' ';
     }
-
-    for(int i = resultSize; i > 0; i--) {
-        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
-    }
-
-    if(finNumerator % finDenominator == 0) {
-        result[resultSize] = '\0';
-    }
-    else {
-        result[resultSize] = '.';
-
-        int mantissaStart = resultSize + 1;
-
-        resultSize = len - (resultSize + 2);
-        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
-        finResult %= pow(10, resultSize);
-        for(int i = 0; i < resultSize; i++) {
-            if((finResult / pow(10, (resultSize - 1) - i) % 10) == '0') {
-                break;
-            }
-            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
-        }
-
-        result[mantissaStart + resultSize] = '\0';
-    }
-
-    return true;
-}
-//--
-bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
-{
-    //hard coded return value to make the code compile
-    //you will have to come up with an algorithm to multiply the two numbers
-
-    int finNumerator = ((c1 * d1) + n1) * ((c2 * d2) + n2);
-    int finDenominator = d1 * d2;
-
-
-
-
-    return true;
-}
-//--
-bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
-{
-    //you will have to come up with an algorithm to divide the two numbers
-    //hard coded return value to make the main() work
-    result[0] = '0';
-    result[1] = '.';
-    result[2] = '5';
-    result[3] = '6';
-    result[4] = '2';
-    result[5] = '5';
-    result[6] = '\0';
-    
-    return true;
 }
