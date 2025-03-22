@@ -14,6 +14,7 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
 
 //Joe's implementation of helper functions
 int HelperMantissa(int denominator1, int numerator1, int denominator2, int numerator2, char sign);
+int MultDivHelper(int characteristic, int numerator, int denominator);
 int LCM(int a, int b);
 int pow(int base, int exp);
 int numSize(int num);
@@ -67,6 +68,17 @@ int main()
         cout<<"Error on add"<<endl;
     }
 
+    // if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
+    // {
+    //     //display string with answer
+    //     cout<<"Answer: "<<answer<<endl;
+    // }
+    // else
+    // {
+    //     //display error message
+    //     cout<<"Error on divide"<<endl;
+    // }
+
     c1 = 5;
     n1 = 1;
     d1 = 2;
@@ -82,17 +94,6 @@ int main()
     else {
         cout << "Error on subtract" << endl;
     }
-
-    // if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
-    // {
-    //     //display string with answer
-    //     cout<<"Answer: "<<answer<<endl;
-    // }
-    // else
-    // {
-    //     //display error message
-    //     cout<<"Error on divide"<<endl;
-    // }
 
     return 0;
 } 
@@ -181,8 +182,12 @@ int HelperMantissa(int denominator1, int numerator1, int denominator2, int numer
         return numerator2 + numerator1;
     else if(sign == '-')
         return numerator1 - numerator2;
-    
+}
 
+int MultDivHelper(int characteristic, int numerator, int denominator) {
+    int newCharacteristic = characteristic * denominator;
+    int retVal = newCharacteristic + numerator;
+    return retVal;
 }
 
 int LCM(int a, int b) {
