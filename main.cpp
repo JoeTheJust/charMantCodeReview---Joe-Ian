@@ -17,7 +17,7 @@ int main()
 {
     //this c-string, or array of 8 characters, ends with the null terminating character '\0'
     //['1', '2', '3', '.', '4', '5', '6', '\0']
-    const char number[] = "1.2.3"; 
+    const char number[] = "-100"; 
     int c, n, d;
 
     //if both conversions from c-string to integers can take place
@@ -34,42 +34,42 @@ int main()
         cout<<"Error on input"<<endl;
     }
 
-    // //room for 9 characters plus the null terminating character
-    // char answer[10];
-    // int c1, n1, d1;
-    // int c2, n2, d2;
+    //room for 9 characters plus the null terminating character
+    char answer[10];
+    int c1, n1, d1;
+    int c2, n2, d2;
 
-    // //initialize the values
-    // c1 = 1;
-    // n1 = 1;
-    // d1 = 2;
+    //initialize the values
+    c1 = 1;
+    n1 = 1;
+    d1 = 2;
 
-    // c2 = 2;
-    // n2 = 2;
-    // d2 = 3; 
+    c2 = 2;
+    n2 = 2;
+    d2 = 3; 
 
-    // //if the c-string can hold at least the characteristic
-    // if(add(c1, n1, d1, c2, n2, d2, answer, 10))
-    // {
-    //     //display string with answer 4.1666666 (cout stops printing at the null terminating character)
-    //     cout<<"Answer: "<<answer<<endl;
-    // }
-    // else
-    // {
-    //     //display error message
-    //     cout<<"Error on add"<<endl;
-    // }
+    //if the c-string can hold at least the characteristic
+    if(add(c1, n1, d1, c2, n2, d2, answer, 10))
+    {
+        //display string with answer 4.1666666 (cout stops printing at the null terminating character)
+        cout<<"Answer: "<<answer<<endl;
+    }
+    else
+    {
+        //display error message
+        cout<<"Error on add"<<endl;
+    }
 
-    // if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
-    // {
-    //     //display string with answer
-    //     cout<<"Answer: "<<answer<<endl;
-    // }
-    // else
-    // {
-    //     //display error message
-    //     cout<<"Error on divide"<<endl;
-    // }
+    if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
+    {
+        //display string with answer
+        cout<<"Answer: "<<answer<<endl;
+    }
+    else
+    {
+        //display error message
+        cout<<"Error on divide"<<endl;
+    }
 
     return 0;
 } 
@@ -146,6 +146,12 @@ bool mantissa(const char numString[], int& numerator, int& denominator)
             //If we've already reached a '.'
             if(startParsing)
             {
+                //If we reach another decimal then something is wrong
+                if(numString[i] == '.')
+                {
+                    ret = false;
+                    break;
+                }
                 //For every number after the decimal
                 if(numString[i] >= '0' && numString[i] <= '9') 
                 {
@@ -178,7 +184,7 @@ bool mantissa(const char numString[], int& numerator, int& denominator)
     }
 
     //If we have a bunch of trailing zeros after the decimal for some reason, make sure the denominator is 1
-    if(numerator == 0) 
+    if(numerator == 0 && ret) 
     {
         denominator = 1;
     }
