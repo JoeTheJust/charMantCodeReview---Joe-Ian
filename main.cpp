@@ -5,6 +5,7 @@ using namespace std;
 //required function prototypes
 bool characteristic(const char numString[], int& c);
 bool mantissa(const char numString[], int& numerator, int& denominator);
+bool checkNegative(const char currentChar);
 
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len); 
@@ -16,7 +17,7 @@ int main()
 {
     //this c-string, or array of 8 characters, ends with the null terminating character '\0'
     //['1', '2', '3', '.', '4', '5', '6', '\0']
-    const char number[] = "123.456"; 
+    const char number[] = "-123.456"; 
     int c, n, d;
 
     //if both conversions from c-string to integers can take place
@@ -77,24 +78,53 @@ bool characteristic(const char numString[], int& c)
 {
 
     int i = 0;
+    c = 0;
+    bool isNegative = false;
+    bool keepCheckingNegative = true;
 
     //Keep checking characters until we reach a decimal point or end of c-string if the number is just a integer 
     while(numString[i] != '.' && numString[i] != '\0') 
     {
+        //
+        if(keepCheckingNegative) 
+        {
+            //Check if there is a negative sign specified
+            isNegative = checkNegative(numString[i]);
+            //Once we find a negative sign, we never have to check for one again
+            keepCheckingNegative = false;
+        }
         //If the character ASCII range falls in the range of 0-9
         if(numString[i] >= '0' && numString[i] <= '9') 
         {
+            //Once we start adding numbers, stop checking for negativ signs.
+            keepCheckingNegative = false;
             //Multiply the previous number by 10 to add the next digit in the number
             c = c * 10;
             //Subtract the current character from '0' to get their integer type.
             c += numString[i] - '0';
         }
         
-        //Increment by 1
         i++;
     }
 
+    //If there was a negative sign, change the sign of c
+    if(isNegative) {
+        c = -c;
+    }
+
     return true;
+}
+//--
+bool checkNegative(const char currentChar) 
+{
+    if(currentChar == '-') 
+    {
+        return true;
+    }
+    else 
+    {
+        return false;
+    }
 }
 //--
 bool mantissa(const char numString[], int& numerator, int& denominator)
