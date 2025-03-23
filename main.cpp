@@ -33,50 +33,67 @@ int main()
         cout<<"Error on input"<<endl;
     }
 
-    //room for 9 characters plus the null terminating character
-    char answer[10];
-    int c1, n1, d1;
-    int c2, n2, d2;
+    // //room for 9 characters plus the null terminating character
+    // char answer[10];
+    // int c1, n1, d1;
+    // int c2, n2, d2;
 
-    //initialize the values
-    c1 = 1;
-    n1 = 1;
-    d1 = 2;
+    // //initialize the values
+    // c1 = 1;
+    // n1 = 1;
+    // d1 = 2;
 
-    c2 = 2;
-    n2 = 2;
-    d2 = 3; 
+    // c2 = 2;
+    // n2 = 2;
+    // d2 = 3; 
 
-    //if the c-string can hold at least the characteristic
-    if(add(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer 4.1666666 (cout stops printing at the null terminating character)
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on add"<<endl;
-    }
+    // //if the c-string can hold at least the characteristic
+    // if(add(c1, n1, d1, c2, n2, d2, answer, 10))
+    // {
+    //     //display string with answer 4.1666666 (cout stops printing at the null terminating character)
+    //     cout<<"Answer: "<<answer<<endl;
+    // }
+    // else
+    // {
+    //     //display error message
+    //     cout<<"Error on add"<<endl;
+    // }
 
-    if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on divide"<<endl;
-    }
+    // if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
+    // {
+    //     //display string with answer
+    //     cout<<"Answer: "<<answer<<endl;
+    // }
+    // else
+    // {
+    //     //display error message
+    //     cout<<"Error on divide"<<endl;
+    // }
 
     return 0;
 } 
 //--
 bool characteristic(const char numString[], int& c)
 {
-    //hard coded return value to make the main() work
-    c = 123;
+
+    int i = 0;
+
+    //Keep checking characters until we reach a decimal point or end of c-string if the number is just a integer 
+    while(numString[i] != '.' && numString[i] != '\0') 
+    {
+        //If the character ASCII range falls in the range of 0-9
+        if(numString[i] >= '0' && numString[i] <= '9') 
+        {
+            //Multiply the previous number by 10 to add the next digit in the number
+            c = c * 10;
+            //Subtract the current character from '0' to get their integer type.
+            c += numString[i] - '0';
+        }
+        
+        //Increment by 1
+        i++;
+    }
+
     return true;
 }
 //--
