@@ -5,7 +5,7 @@ using namespace std;
 //required function prototypes
 bool characteristic(const char numString[], int& c);
 bool mantissa(const char numString[], int& numerator, int& denominator);
-bool checkNegative(const char currentChar);
+bool checkValidInput(const char currentChar, const int pos);
 
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len); 
@@ -17,7 +17,7 @@ int main()
 {
     //this c-string, or array of 8 characters, ends with the null terminating character '\0'
     //['1', '2', '3', '.', '4', '5', '6', '\0']
-    const char number[] = "-123.456"; 
+    const char number[] = "123.456"; 
     int c, n, d;
 
     //if both conversions from c-string to integers can take place
@@ -78,53 +78,75 @@ bool characteristic(const char numString[], int& c)
 {
 
     int i = 0;
+    //Initialize number to 0
     c = 0;
+    //Bool for if a number is negative
     bool isNegative = false;
-    bool keepCheckingNegative = true;
+    //Return bool for valid input
+    bool ret = true;
 
     //Keep checking characters until we reach a decimal point or end of c-string if the number is just a integer 
     while(numString[i] != '.' && numString[i] != '\0') 
     {
-        //
-        if(keepCheckingNegative) 
+        //Make sure the input for the current character is valid
+        if(checkValidInput(numString[i], i))
         {
-            //Check if there is a negative sign specified
-            isNegative = checkNegative(numString[i]);
-            //Once we find a negative sign, we never have to check for one again
-            keepCheckingNegative = false;
+            //If there is a negative sign (pos 0)
+            if(numString[i] == '-' && i == 0) 
+            {
+                
+                isNegative = true;
+            }
+            //If the character ASCII range falls in the range of 0-9
+            else if(numString[i] >= '0' && numString[i] <= '9') 
+            {
+                //Multiply the previous number by 10 to add the next digit in the number
+                c = c * 10;
+                //Subtract the current character from '0' to get their integer type.
+                c += numString[i] - '0';
+            }
+            
+            i++;
         }
-        //If the character ASCII range falls in the range of 0-9
-        if(numString[i] >= '0' && numString[i] <= '9') 
+
+        //Otherwise return an error on input message
+        else 
         {
-            //Once we start adding numbers, stop checking for negativ signs.
-            keepCheckingNegative = false;
-            //Multiply the previous number by 10 to add the next digit in the number
-            c = c * 10;
-            //Subtract the current character from '0' to get their integer type.
-            c += numString[i] - '0';
+            ret = false;
+            break;
         }
-        
-        i++;
     }
 
-    //If there was a negative sign, change the sign of c
-    if(isNegative) {
+    //If there was a negative sign and the input was valid, change the sign of c
+    if(isNegative && ret) {
         c = -c;
     }
 
-    return true;
+    return ret;
 }
 //--
-bool checkNegative(const char currentChar) 
+bool checkValidInput(const char currentChar, const int pos)
 {
-    if(currentChar == '-') 
+    //Return value
+    bool ret = false;
+    
+    //If a char is a '0'-'9'
+    if(currentChar >= '0' && currentChar <= '9')
     {
-        return true;
+        ret = true;
     }
-    else 
+    //If the first char is a sign +/-
+    else if((currentChar == '+' || currentChar == '-') && pos == 0)
     {
-        return false;
+        ret = true;
     }
+    //If a char is a space or decimal
+    else if(currentChar == ' ' || currentChar == '.') 
+    {
+        ret = true;
+    }
+
+    return ret;
 }
 //--
 bool mantissa(const char numString[], int& numerator, int& denominator)
