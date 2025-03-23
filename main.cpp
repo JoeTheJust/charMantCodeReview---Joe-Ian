@@ -69,16 +69,16 @@ int main()
         cout<<"Error on add"<<endl;
     }
 
-    // if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
-    // {
-    //     //display string with answer
-    //     cout<<"Answer: "<<answer<<endl;
-    // }
-    // else
-    // {
-    //     //display error message
-    //     cout<<"Error on divide"<<endl;
-    // }
+    if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
+    {
+        //display string with answer
+        cout<<"Answer: "<<answer<<endl;
+    }
+    else
+    {
+        //display error message
+        cout<<"Error on divide"<<endl;
+    }
 
     c1 = 5;
     n1 = 1;
@@ -159,7 +159,15 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
         result[resultSize] = '\0';
     }
     else {
-        result[resultSize] = '.';
+
+        if(finResult == 0) {
+            result[resultSize] = '0';
+            result[resultSize + 1] = '.';
+            resultSize++;
+        }
+        else {
+            result[resultSize] = '.';
+        }
 
         int mantissaStart = resultSize + 1;
 
@@ -210,7 +218,15 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
         result[resultSize] = '\0';
     }
     else {
-        result[resultSize] = '.';
+        if(finResult == 0) {
+            result[resultSize] = '0';
+            result[resultSize + 1] = '.';
+            resultSize++;
+        }
+        else {
+            result[resultSize] = '.';
+        }
+
 
         int mantissaStart = resultSize + 1;
 
@@ -259,7 +275,15 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
         result[resultSize] = '\0';
     }
     else {
-        result[resultSize] = '.';
+        if(finResult == 0) {
+            result[resultSize] = '0';
+            result[resultSize + 1] = '.';
+            resultSize++;
+        }
+        else {
+            result[resultSize] = '.';
+        }
+        
 
         int mantissaStart = resultSize + 1;
 
@@ -287,13 +311,60 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
 
     resetResult(result, len);
 
-    result[0] = '0';
-    result[1] = '.';
-    result[2] = '5';
-    result[3] = '6';
-    result[4] = '2';
-    result[5] = '5';
-    result[6] = '\0';
+    // result[0] = '0';
+    // result[1] = '.';
+    // result[2] = '5';
+    // result[3] = '6';
+    // result[4] = '2';
+    // result[5] = '5';
+    // result[6] = '\0';
+
+    int firstNumerator = MultDivHelper(c1, n1, d1);
+    int secondNumerator = MultDivHelper(c2, n2, d2);
+
+    int finDenominator = d1 * secondNumerator;
+    int finNumerator = firstNumerator * d2;
+
+    int finResult = finNumerator / finDenominator;
+    int resultSize = numSize(finResult);
+
+    if(resultSize >= len) {
+
+        return false;
+    }
+
+    for(int i = resultSize; i > 0; i--) {
+        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
+    }
+
+    if(finNumerator % finDenominator == 0) {
+        result[resultSize] = '\0';
+    }
+    else {
+        if(finResult == 0) {
+            result[resultSize] = '0';
+            result[resultSize + 1] = '.';
+            resultSize++;
+        }
+        else {
+            result[resultSize] = '.';
+        }
+        
+
+        int mantissaStart = resultSize + 1;
+
+        resultSize = len - (resultSize + 2);
+        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
+        finResult %= pow(10, resultSize);
+        for(int i = 0; i < resultSize; i++) {
+            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
+                break;
+            }
+            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
+        }
+
+        result[mantissaStart + resultSize] = '\0';
+    }
     
     return true;
 }
