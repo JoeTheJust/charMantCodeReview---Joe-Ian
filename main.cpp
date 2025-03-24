@@ -19,6 +19,7 @@ int LCM(int a, int b);
 int pow(int base, int exp);
 int numSize(int num);
 void resetResult(char result[], int len);
+bool constructResult(int numerator, int denominator, char result[], int len);
 
 int main()
 {
@@ -142,48 +143,9 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 
     int finNumerator = AddSubtractHelper(d1, n1, d2, n2, '+') + ((c1 + c2) * finDenominator);
 
-
-    int finResult = finNumerator / finDenominator;
-    int resultSize = numSize(finResult);
-
-    if(resultSize >= len) {
+    if(!constructResult(finNumerator, finDenominator, result, len)) {
         return false;
     }
-
-    for(int i = resultSize; i > 0; i--) {
-        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
-    }
-
-
-    if(finNumerator % finDenominator == 0) {
-        result[resultSize] = '\0';
-    }
-    else {
-
-        if(finResult == 0) {
-            result[resultSize] = '0';
-            result[resultSize + 1] = '.';
-            resultSize++;
-        }
-        else {
-            result[resultSize] = '.';
-        }
-
-        int mantissaStart = resultSize + 1;
-
-        resultSize = len - (resultSize + 2);
-        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
-        finResult %= pow(10, resultSize);
-        for(int i = 0; i < resultSize; i++) {
-            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
-                break;
-            }
-            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
-        }
-
-        result[mantissaStart + resultSize] = '\0';
-    }
-
 
     return true;
 }
@@ -202,45 +164,8 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
     int finNumerator = AddSubtractHelper(d1, n1, d2, n2, '-') + ((c1 - c2) * finDenominator);
 
 
-    int finResult = finNumerator / finDenominator;
-    int resultSize = numSize(finResult);
-
-    if(resultSize >= len) {
-
+    if(!constructResult(finNumerator, finDenominator, result, len)) {
         return false;
-    }
-
-    for(int i = resultSize; i > 0; i--) {
-        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
-    }
-
-    if(finNumerator % finDenominator == 0) {
-        result[resultSize] = '\0';
-    }
-    else {
-        if(finResult == 0) {
-            result[resultSize] = '0';
-            result[resultSize + 1] = '.';
-            resultSize++;
-        }
-        else {
-            result[resultSize] = '.';
-        }
-
-
-        int mantissaStart = resultSize + 1;
-
-        resultSize = len - (resultSize + 2);
-        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
-        finResult %= pow(10, resultSize);
-        for(int i = 0; i < resultSize; i++) {
-            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
-                break;
-            }
-            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
-        }
-
-        result[mantissaStart + resultSize] = '\0';
     }
 
     return true;
@@ -259,47 +184,9 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
     int finDenominator = d1 * d2;
     int finNumerator = firstNumerator * secondNumerator;
 
-    int finResult = finNumerator / finDenominator;
-    int resultSize = numSize(finResult);
-
-    if(resultSize >= len) {
-
+    if(!constructResult(finNumerator, finDenominator, result, len)) {
         return false;
     }
-
-    for(int i = resultSize; i > 0; i--) {
-        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
-    }
-
-    if(finNumerator % finDenominator == 0) {
-        result[resultSize] = '\0';
-    }
-    else {
-        if(finResult == 0) {
-            result[resultSize] = '0';
-            result[resultSize + 1] = '.';
-            resultSize++;
-        }
-        else {
-            result[resultSize] = '.';
-        }
-        
-
-        int mantissaStart = resultSize + 1;
-
-        resultSize = len - (resultSize + 2);
-        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
-        finResult %= pow(10, resultSize);
-        for(int i = 0; i < resultSize; i++) {
-            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
-                break;
-            }
-            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
-        }
-
-        result[mantissaStart + resultSize] = '\0';
-    }
-
 
     return true;
 }
@@ -325,45 +212,8 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
     int finDenominator = d1 * secondNumerator;
     int finNumerator = firstNumerator * d2;
 
-    int finResult = finNumerator / finDenominator;
-    int resultSize = numSize(finResult);
-
-    if(resultSize >= len) {
-
+    if(!constructResult(finNumerator, finDenominator, result, len)) {
         return false;
-    }
-
-    for(int i = resultSize; i > 0; i--) {
-        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
-    }
-
-    if(finNumerator % finDenominator == 0) {
-        result[resultSize] = '\0';
-    }
-    else {
-        if(finResult == 0) {
-            result[resultSize] = '0';
-            result[resultSize + 1] = '.';
-            resultSize++;
-        }
-        else {
-            result[resultSize] = '.';
-        }
-        
-
-        int mantissaStart = resultSize + 1;
-
-        resultSize = len - (resultSize + 2);
-        finResult = (finNumerator * pow(10, resultSize)) / finDenominator;
-        finResult %= pow(10, resultSize);
-        for(int i = 0; i < resultSize; i++) {
-            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
-                break;
-            }
-            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
-        }
-
-        result[mantissaStart + resultSize] = '\0';
     }
     
     return true;
@@ -434,5 +284,48 @@ int numSize(int num) {
 void resetResult(char result[], int len) {
     for(int i = 0; i < len; i++) {
         result[i] = ' ';
+    }
+}
+
+bool constructResult(int numerator, int denominator, char result[], int len) {
+    int finResult = numerator / denominator;
+    int resultSize = numSize(finResult);
+
+    if(resultSize >= len) {
+
+        return false;
+    }
+
+    for(int i = resultSize; i > 0; i--) {
+        result[resultSize - i] = '0' + ((finResult / pow(10, i - 1) % 10));
+    }
+
+    if(numerator % denominator == 0) {
+        result[resultSize] = '\0';
+    }
+    else {
+        if(finResult == 0) {
+            result[resultSize] = '0';
+            result[resultSize + 1] = '.';
+            resultSize++;
+        }
+        else {
+            result[resultSize] = '.';
+        }
+        
+
+        int mantissaStart = resultSize + 1;
+
+        resultSize = len - (resultSize + 2);
+        finResult = (numerator * pow(10, resultSize)) / denominator;
+        finResult %= pow(10, resultSize);
+        for(int i = 0; i < resultSize; i++) {
+            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
+                break;
+            }
+            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
+        }
+
+        result[mantissaStart + resultSize] = '\0';
     }
 }
