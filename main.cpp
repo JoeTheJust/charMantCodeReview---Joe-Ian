@@ -6,6 +6,8 @@ using namespace std;
 bool characteristic(const char numString[], int& c);
 bool mantissa(const char numString[], int& numerator, int& denominator);
 bool checkValidInput(const char currentChar, const char nextChar, const int pos);
+bool inASCIIRange(const char currentChar);
+int getASCIIPos(const char currentChar);
 
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len); 
@@ -17,7 +19,7 @@ int main()
 {
     //this c-string, or array of 8 characters, ends with the null terminating character '\0'
     //['1', '2', '3', '.', '4', '5', '6', '\0']
-    const char number[] = "-100"; 
+    const char number[] = "123.456"; 
     int c, n, d;
 
     //if both conversions from c-string to integers can take place
@@ -77,6 +79,7 @@ int main()
 bool characteristic(const char numString[], int& c)
 {
 
+    //Counter for the position of the current character in the c-string
     int i = 0;
     //Initialize number to 0
     c = 0;
@@ -91,19 +94,19 @@ bool characteristic(const char numString[], int& c)
         //Make sure the input for the current character is valid, use the current character, next character, and position.
         if(checkValidInput(numString[i], numString[i+1], i))
         {
-            //If there is a negative sign (pos 0)
+            //If there is a negative sign (At pos 0)
             if(numString[i] == '-' && i == 0) 
             {
                 
                 isNegative = true;
             }
             //If the character ASCII range falls in the range of 0-9
-            else if(numString[i] >= '0' && numString[i] <= '9') 
+            else if(inASCIIRange(numString[i])) 
             {
                 //Multiply the previous number by 10 to add the next digit in the number
                 c *= 10;
                 //Subtract the current character from '0' to get their integer type.
-                c += numString[i] - '0';
+                c += getASCIIPos(numString[i]);
             }
             
             i++;
@@ -153,11 +156,11 @@ bool mantissa(const char numString[], int& numerator, int& denominator)
                     break;
                 }
                 //For every number after the decimal
-                if(numString[i] >= '0' && numString[i] <= '9') 
+                if(inASCIIRange(numString[i])) 
                 {
                     //Same logic as the characteristic() function 
                     numerator *= 10;
-                    numerator += numString[i] - '0';
+                    numerator += getASCIIPos(numString[i]);
 
                     //Increase denominator by 10
                     denominator*= 10;
@@ -198,23 +201,43 @@ bool checkValidInput(const char currentChar, const char nextChar, const int pos)
     bool ret = false;
 
     //If a char is a '0'-'9'
-    if(currentChar >= '0' && currentChar <= '9')
+    if(inASCIIRange(currentChar))
     {
         ret = true;
     }
     //If the first char is a sign +/-, the next character must be a number or decimal
-    else if((currentChar == '+' || currentChar == '-') && ((nextChar >= '0' && nextChar <= '9') || nextChar == '.') && pos == 0)
+    else if((currentChar == '+' || currentChar == '-') && (inASCIIRange(nextChar) || nextChar == '.') && pos == 0)
     {
         ret = true;
     }
     //If a char is a space or decimal. If a decimal there must be a number after it.
-    else if(currentChar == ' ' || (currentChar == '.' && (nextChar >= '0' && nextChar <= '9')))
+    else if((currentChar == ' ') || ((currentChar == '.')) && (inASCIIRange(nextChar)))
     {
         ret = true;
     }
 
+
     return ret;
 }    
+//--
+//Helper Function to Check if the current character is in the ASCII range of '0'-'9'
+bool inASCIIRange(char currentChar) {
+    if(currentChar >= '0' && currentChar <= '9')
+    {
+        return true;
+    }
+    
+    else 
+    {
+        return false;
+    }
+}
+//--
+//Helper Function to get the position of the current character in the ASCII table relative to '0'
+int getASCIIPos(const char currentChar)
+{
+    return currentChar - '0';   
+}
 //--
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
