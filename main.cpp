@@ -84,13 +84,13 @@ int main()
 
     //Added test of subtract and multiply functions with new numbers
 
-    c1 = 0;
-    n1 = 1;
+    c1 = 1;
+    n1 = 0;
     d1 = 2;
 
 
-    c2 = 0;
-    n2 = 3;
+    c2 = 1;
+    n2 = 0;
     d2 = 4;
 
     if(subtract(c1, n1, d1, c2, n2, d2, answer, 10)) {
@@ -131,6 +131,11 @@ bool mantissa(const char numString[], int& numerator, int& denominator)
 //--
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
+
+    //We first check to see if we get a divide by zero error, and return false if we do
+    if(d1 == 0 || d2 == 0) 
+        return false;
+    
     
 
     //Clears result from any previous operation function use
@@ -138,20 +143,20 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 
     //We get the numerator and denominator (using characteristics, numerators, and demoninators) to avoid float/double math
 
-    int finDenominator = LCM(d1, d2);
-    int finNumerator;
+    int finalDenominator = LCM(d1, d2);
+    int finalNumerator;
 
     if(n1 == 0 && n2 == 0) {
-        finNumerator = c1 + c2;
-        finDenominator = 1;
+        finalNumerator = c1 + c2;
+        finalDenominator = 1;
     }
     else {
-        finNumerator = AddSubtractHelper(c1, d1, n1, c2, d2, n2, '+');
+        finalNumerator = AddSubtractHelper(c1, d1, n1, c2, d2, n2, '+');
     }
 
     //Finally, we do the division, and put the result into the character array, returning false on errors and true on success
 
-    if(!constructResult(finNumerator, finDenominator, result, len)) {
+    if(!constructResult(finalNumerator, finalDenominator, result, len)) {
         return false;
     }
 
@@ -162,26 +167,30 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
 
+    //We first check to see if we get a divide by zero error, and return false if we do
+    if(d1 == 0 || d2 == 0) 
+        return false;
+
     //Clears result from any previous operation function use
     resetResult(result, len);
 
     //We get the numerator and denominator (using characteristics, numerators, and demoninators) to avoid float/double math
 
-    int finDenominator = LCM(d1, d2);
-    int finNumerator;
+    int finalDenominator = LCM(d1, d2);
+    int finalNumerator;
 
     if(n1 == 0 && n2 == 0) {
-        finNumerator = c1 - c2;
-        finDenominator = 1;
+        finalNumerator = c1 - c2;
+        finalDenominator = 1;
     }
     else {
-        finNumerator = AddSubtractHelper(c1, d1, n1, c2, d2, n2, '-');
+        finalNumerator = AddSubtractHelper(c1, d1, n1, c2, d2, n2, '-');
     }
 
 
     //Finally, we do the division, and put the result into the character array, returning false on errors and true on success
 
-    if(!constructResult(finNumerator, finDenominator, result, len)) {
+    if(!constructResult(finalNumerator, finalDenominator, result, len)) {
         return false;
     }
 
@@ -190,6 +199,10 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 //--
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
+
+    //We first check to see if we get a divide by zero error, and return false if we do
+    if(d1 == 0 || d2 == 0) 
+        return false;
 
     //Clears result from any previous operation function use
     resetResult(result, len);
@@ -200,12 +213,12 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
     int firstNumerator = MultDivHelper(c1, n1, d1);
     int secondNumerator = MultDivHelper(c2, n2, d2);
 
-    int finDenominator = d1 * d2;
-    int finNumerator = firstNumerator * secondNumerator;
+    int finalDenominator = d1 * d2;
+    int finalNumerator = firstNumerator * secondNumerator;
 
     //Finally, we do the division, and put the result into the character array, returning false on errors and true on success
 
-    if(!constructResult(finNumerator, finDenominator, result, len)) {
+    if(!constructResult(finalNumerator, finalDenominator, result, len)) {
         return false;
     }
 
@@ -215,6 +228,11 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
 
+    //We first check to see if we get a divide by zero error, and return false if we do
+    //Also checks for c2 here since this is the divide operation
+    if(d1 == 0 || d2 == 0 || c2 == 0) 
+        return false;
+
     //Clears result from any previous operation function use
     resetResult(result, len);
 
@@ -223,12 +241,12 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
     int firstNumerator = MultDivHelper(c1, n1, d1);
     int secondNumerator = MultDivHelper(c2, n2, d2);
 
-    int finDenominator = d1 * secondNumerator;
-    int finNumerator = firstNumerator * d2;
+    int finalDenominator = d1 * secondNumerator;
+    int finalNumerator = firstNumerator * d2;
 
     //Finally, we do the division, and put the result into the character array, returning false on errors and true on success
 
-    if(!constructResult(finNumerator, finDenominator, result, len)) {
+    if(!constructResult(finalNumerator, finalDenominator, result, len)) {
         return false;
     }
     
@@ -239,6 +257,7 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
 //Helper function to calculate result of adding or subtracting the mantissa together
 int AddSubtractHelper(int characteristic1, int denominator1, int numerator1, int characteristic2, int denominator2, int numerator2, char sign) {
 
+    //Adjust for if we are adding or subtracting negative values
     if(characteristic1 < 0) {
         numerator1 *= -1;
     }
@@ -247,19 +266,21 @@ int AddSubtractHelper(int characteristic1, int denominator1, int numerator1, int
         numerator2 *= -1;
     }
 
+    //Adds an adjusted characteristic to numerator
     numerator1 += (characteristic1 * denominator1);
 
     numerator2 += (characteristic2 * denominator2);
 
+
+    //We find the Least Common Multiple for our fraction math and then create multiply values for the numerators
     int newDenomenator = LCM(denominator1, denominator2);
     int mult1 = newDenomenator / denominator1;
     int mult2 = newDenomenator / denominator2;
-
-
-    
     numerator1 *= mult1;
     numerator2 *= mult2;
 
+
+    //Result depends on if we are adding or subtracting
     if(sign == '+')
         return numerator2 + numerator1;
     else if(sign == '-')
@@ -347,14 +368,23 @@ void resetResult(char result[], int len) {
 
 //Helper function to put the numerical result in a character array.
 bool constructResult(int numerator, int denominator, char result[], int len) {
-    int finResult = numerator / denominator;
-    int resultSize = numSize(finResult);
+
+    //calculates the characteristic, and it's size. Also declare a variable in case of a negative result
+    int finalResult = numerator / denominator;
+    int resultSize = numSize(finalResult);
     int isNegative = 0;
 
+    //First checks to see if result is zero with no remainder (mantissa)
+    if(finalResult == 0 && numerator % denominator == 0) {
+        result[0] = '0';
+        result[1] = '\0';
+        return true;
+    }
 
-    //First checks if result is negative, and adjusts result[] accordingly
 
-    if((finResult < 0 || numerator < 0 || denominator < 0) && !(numerator < 0 && denominator < 0)) {
+    //Then checks if result is negative, and adjusts result[] accordingly
+
+    if((finalResult < 0 || numerator < 0 || denominator < 0) && !(numerator < 0 && denominator < 0)) {
         result[0] = '-';
         isNegative++;
 
@@ -370,17 +400,20 @@ bool constructResult(int numerator, int denominator, char result[], int len) {
         return false;
     }
 
-    //Does characteristic first, then gets into mantissa if needed
+    //Stores the characteristic into the result array
 
     for(int i = resultSize; i > 0; i--) {
-        result[resultSize + isNegative - i] = '0' + (abs((finResult / pow(10, i - 1) % 10)));
+        result[resultSize + isNegative - i] = '0' + (abs((finalResult / pow(10, i - 1) % 10)));
     }
+
+    //If no mantissa, we add in null terminator.
 
     if(numerator % denominator == 0) {
         result[resultSize + isNegative] = '\0';
     }
+    //else, we first check for if there was no characteristic at all, and adjust result accordingly for either case
     else {
-        if(finResult == 0) {
+        if(finalResult == 0) {
             result[resultSize + isNegative] = '0';
             result[resultSize + isNegative + 1] = '.';
             resultSize++;
@@ -389,20 +422,23 @@ bool constructResult(int numerator, int denominator, char result[], int len) {
             result[resultSize + isNegative] = '.';
         }
         
+        //Declare the starting position of our mantissa in the character array
+        int mantissaStartPos = resultSize + 1 + isNegative;
 
-        int mantissaStart = resultSize + 1 + isNegative;
-
+        //Refactor resultSize and findalResult variable for this storage in the array
         resultSize = len - (resultSize + 2 + isNegative);
-        finResult = (abs(numerator) * pow(10, resultSize)) / abs(denominator);
-        finResult %= pow(10, resultSize);
+        finalResult = (abs(numerator) * pow(10, resultSize)) / abs(denominator);
+        finalResult %= pow(10, resultSize);
+
+        //Put ints one at a time into the array, and breaks if we are done early
         for(int i = 0; i < resultSize; i++) {
-            if((finResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
+            if((finalResult / pow(10, (resultSize - 1) - i) % 10) == 0) {
                 break;
             }
-            result[mantissaStart + i] = '0' + (finResult / pow(10, (resultSize - 1) - i) % 10);
+            result[mantissaStartPos + i] = '0' + (finalResult / pow(10, (resultSize - 1) - i) % 10);
         }
-
-        result[mantissaStart + resultSize] = '\0';
+        result[mantissaStartPos + resultSize] = '\0';
     }
+
     return true;
 }
