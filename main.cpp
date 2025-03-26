@@ -17,60 +17,48 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
 
 int main()
 {
-    //this c-string, or array of 8 characters, ends with the null terminating character '\0'
-    //['1', '2', '3', '.', '4', '5', '6', '\0']
-    const char number[] = "123.456"; 
+    const char* numbers[] = {
+        //good inputs - 13
+        "123.456",
+        "  123.456",
+        "123.456  ",
+        "-123.456",
+        "+123.456",
+        "-.456",
+        "-0.456",
+        "+.456",
+        "+0.456",
+        "0",
+        "0.0",
+        "0.000000",
+        ".0",
+        //bad inputs - 13
+        "+",
+        "-",
+        "12.34.56",
+        ".-",
+        "+.",
+        "-4.+2 ",
+        "......",
+        "+x",
+        "abc",
+        "abc.1",
+        "1.abc",
+        "1abc",
+        ""
+    };
     int c, n, d;
 
-    //if both conversions from c-string to integers can take place
-    if(characteristic(number, c) && mantissa(number, n, d))
+    for (int i = 0; i < 26; i++)
     {
-        //do some math with c, n, and d
-        cout<<"c: "<<c<<endl;
-        cout<<"n: "<<n<<endl;
-        cout<<"d: "<<d<<endl;
-    }
-    else //at least one of the conversions failed
-    {
-        //handle the error on input
-        cout<<"Error on input"<<endl;
-    }
-
-    //room for 9 characters plus the null terminating character
-    char answer[10];
-    int c1, n1, d1;
-    int c2, n2, d2;
-
-    //initialize the values
-    c1 = 1;
-    n1 = 1;
-    d1 = 2;
-
-    c2 = 2;
-    n2 = 2;
-    d2 = 3; 
-
-    //if the c-string can hold at least the characteristic
-    if(add(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer 4.1666666 (cout stops printing at the null terminating character)
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on add"<<endl;
-    }
-
-    if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on divide"<<endl;
+        if(characteristic(numbers[i], c) && mantissa(numbers[i], n, d))
+        {
+            cout<<"Successful input!"<<endl;
+        }
+        else
+        {
+            cout<<"Error on input!"<<endl;
+        }
     }
 
     return 0;
@@ -78,6 +66,11 @@ int main()
 //--
 bool characteristic(const char numString[], int& c)
 {
+    //If the c-string is empty, return false
+    if(numString[0] == '\0')
+    {
+        return false;
+    }
 
     //Counter for the position of the current character in the c-string
     int i = 0;
