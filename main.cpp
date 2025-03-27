@@ -6,17 +6,19 @@ const int SHORT_ARRAY_LENGTH = 5;
 const int MEDIUM_ARRAY_LENGTH = 10;
 const int LARGE_ARRAY_LENGTH = 20;
 
-//required function prototypes
+//Ian's main functions
 bool characteristic(const char numString[], int& c);
 bool mantissa(const char numString[], int& numerator, int& denominator);
-
+//Ian's helper functions
+bool checkValidInput(const char currentChar, const char nextChar, const int pos);
+bool inASCIIRange(const char currentChar);
+int getASCIIPos(const char currentChar);
+//Joe's main functions
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len); 
-
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
-
-//Joe's implementation of helper functions
+//Joe's helper functions
 int AddSubtractHelper(int characteristic1, int denominator1, int numerator1, int characteristic2, int denominator2, int numerator2, char sign);
 int MultDivHelper(int characteristic, int numerator, int denominator);
 int LCM(int a, int b);
@@ -25,21 +27,31 @@ int numSize(int num);
 void resetResult(char result[], int len);
 bool constructResult(int numerator, int denominator, char result[], int len);
 int abs(int num);
-
+//Test functions
+void testCharacteristicAndMantissa();
+void shouldConvert(const char number[], int expectedCharacteristic, int expectedNumerator, int expectedDenominator);
+void shouldNotConvert(const char number[]);
 void testMath();
 void testAdd();
 void testSubtract();
 void testMultiply();
 void testDivide();
 
+
 int main()
 {
-    //this c-string, or array of 8 characters, ends with the null terminating character '\0'
-    //['1', '2', '3', '.', '4', '5', '6', '\0']
-    const char number[] = "123.456"; 
-    int c, n, d;
+    //Strong test functions which admittedly don't all work
+    testCharacteristicAndMantissa();
+    testMath();
 
-    //if both conversions from c-string to integers can take place
+    cout<<endl;
+
+    //Initialize variables to test clean, nice inputs
+    const char number[] = "15";
+    const char secondNumber[] = "5.5";
+    int c, n, d;
+    int c1, n1, d1;
+
     if(characteristic(number, c) && mantissa(number, n, d))
     {
         //do some math with c, n, and d
@@ -47,33 +59,24 @@ int main()
         cout<<"n: "<<n<<endl;
         cout<<"d: "<<d<<endl;
     }
-    else //at least one of the conversions failed
+
+    if(characteristic(secondNumber, c1) && mantissa(secondNumber, n1, d1))
     {
-        //handle the error on input
-        cout<<"Error on input"<<endl;
+        //do some math with c1, n1, and d1
+        cout<<"c1: "<<c1<<endl;
+        cout<<"n1: "<<n1<<endl;
+        cout<<"d1: "<<d1<<endl;
     }
+
+    cout<<endl;
 
     //room for 9 characters plus the null terminating character
     char answer[10];
-    int c1, n1, d1;
-    int c2, n2, d2;
 
-    //initialize the values
-    c1 = 1;
-    n1 = 1;
-    d1 = 2;
-
-    c2 = 2;
-    n2 = 2;
-    d2 = 3; 
-
-    
-
-    //if the c-string can hold at least the characteristic
-    if(add(c1, n1, d1, c2, n2, d2, answer, 10))
+    if(add(c, n, d, c1, n1, d1, answer, 10))
     {
         //display string with answer 4.1666666 (cout stops printing at the null terminating character)
-        cout<<"Answer: "<<answer<<endl;
+        cout<<"+ | Answer: "<<answer<<endl;
     }
     else
     {
@@ -81,10 +84,28 @@ int main()
         cout<<"Error on add"<<endl;
     }
 
-    if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
+    if(subtract(c, n, d, c1, n1, d1, answer, 10)) {
+        //display string with answer
+        cout<<"- | Answer: "<<answer<<endl;
+    }
+    else {
+        //display error message
+        cout << "Error on subtract" << endl;
+    }
+
+    if(multiply(c, n, d, c1, n1, d1, answer, 10)) {
+        //display string with answer
+        cout<<"* | Answer: "<<answer<<endl;
+    }
+    else {
+        //display error message
+        cout << "Error on multiply" << endl;
+    }
+
+    if(divide(c, n, d, c1, n1, d1, answer, 10))
     {
         //display string with answer
-        cout<<"Answer: "<<answer<<endl;
+        cout<<"/ | Answer: "<<answer<<endl;
     }
     else
     {
@@ -92,56 +113,177 @@ int main()
         cout<<"Error on divide"<<endl;
     }
 
-    //Added test of subtract and multiply functions with new numbers
-
-    c1 = 1;
-    n1 = 0;
-    d1 = 2;
-
-
-    c2 = 1;
-    n2 = 0;
-    d2 = 4;
-
-    if(subtract(c1, n1, d1, c2, n2, d2, answer, 10)) {
-        //display string with answer
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else {
-        //display error message
-        cout << "Error on subtract" << endl;
-    }
-
-    if(multiply(c1, n1, d1, c2, n2, d2, answer, 10)) {
-        //display string with answer
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else {
-        //display error message
-        cout << "Error on multiply" << endl;
-    }
-
-
-    cout << endl;
-
-    testMath();
+    cout<<endl;
 
     return 0;
 } 
 //--
 bool characteristic(const char numString[], int& c)
 {
-    //hard coded return value to make the main() work
-    c = 123;
-    return true;
+    //If the c-string is empty, return false
+    if(numString[0] == '\0')
+    {
+        return false;
+    }
+
+    //Counter for the position of the current character in the c-string
+    int i = 0;
+    //Initialize number to 0
+    c = 0;
+    //Bool for if a number is negative
+    bool isNegative = false;
+    //Return bool for valid input
+    bool ret = true;
+
+    //Keep checking characters until we reach a decimal point or end of c-string if the number is just a integer 
+    while(numString[i] != '.' && numString[i] != '\0') 
+    {
+        //Make sure the input for the current character is valid, use the current character, next character, and position.
+        if(checkValidInput(numString[i], numString[i+1], i))
+        {
+            //If there is a negative sign (At pos 0)
+            if(numString[i] == '-' && i == 0) 
+            {
+                
+                isNegative = true;
+            }
+            //If the character ASCII range falls in the range of 0-9
+            else if(inASCIIRange(numString[i])) 
+            {
+                //Multiply the previous number by 10 to add the next digit in the number
+                c *= 10;
+                //Subtract the current character from '0' to get their integer type.
+                c += getASCIIPos(numString[i]);
+            }
+            
+            i++;
+        }
+
+        //Otherwise return an error on input message
+        else 
+        {
+            ret = false;
+            break;
+        }
+    }
+
+    //If there was a negative sign and the input was valid, change the sign of c
+    if(isNegative && ret) 
+    {
+        c = -c;
+    }
+
+    return ret;
 }
 //--
 bool mantissa(const char numString[], int& numerator, int& denominator)
 {
-    //hard coded return value to make the main() work
-    numerator = 456;
-    denominator = 1000;
-    return true;
+    int i = 0;
+
+    //Set numerator to 0 and denominator to 1 assuming there is no mantissa (base case)
+    numerator = 0;
+    denominator = 1;
+
+    //Bool to start parsing the mantissa once we reach a '.'
+    bool startParsing = false;
+    //Return bool for valid input
+    bool ret = true;
+
+    while(numString[i] != '\0') {
+        //Make sure the input for the current character is valid
+        if(checkValidInput(numString[i], numString[i+1], i))
+        {
+            //If we've already reached a '.'
+            if(startParsing)
+            {
+                //If we reach another decimal then something is wrong
+                if(numString[i] == '.')
+                {
+                    ret = false;
+                    break;
+                }
+                //For every number after the decimal
+                if(inASCIIRange(numString[i])) 
+                {
+                    //Same logic as the characteristic() function 
+                    numerator *= 10;
+                    numerator += getASCIIPos(numString[i]);
+
+                    //Increase denominator by 10
+                    denominator*= 10;
+                    
+                }
+            }
+
+            //Else check if the current character is a '.'
+            else if(numString[i] == '.' && !startParsing) 
+            {
+                //Ready to parse
+                startParsing = true;
+            }
+
+            i++;
+        }
+
+        //Otherwise return an error on input message
+        else 
+        {
+            ret = false;
+            break;
+        }
+    }
+
+    //If we have a bunch of trailing zeros after the decimal for some reason, make sure the denominator is 1
+    if(numerator == 0 && ret) 
+    {
+        denominator = 1;
+    }
+
+    return ret;
+}
+//--
+bool checkValidInput(const char currentChar, const char nextChar, const int pos)
+{
+    //Return value assuming the input is invalid
+    bool ret = false;
+
+    //If a char is a '0'-'9'
+    if(inASCIIRange(currentChar))
+    {
+        ret = true;
+    }
+    //If the first char is a sign +/-, the next character must be a number or decimal
+    else if((currentChar == '+' || currentChar == '-') && (inASCIIRange(nextChar) || nextChar == '.') && pos == 0)
+    {
+        ret = true;
+    }
+    //If a char is a space or decimal. If a decimal there must be a number after it.
+    else if((currentChar == ' ') || ((currentChar == '.')) && (inASCIIRange(nextChar)))
+    {
+        ret = true;
+    }
+
+
+    return ret;
+}    
+//--
+//Helper Function to Check if the current character is in the ASCII range of '0'-'9'
+bool inASCIIRange(char currentChar) {
+    if(currentChar >= '0' && currentChar <= '9')
+    {
+        return true;
+    }
+    
+    else 
+    {
+        return false;
+    }
+}
+//--
+//Helper Function to get the position of the current character in the ASCII table relative to '0'
+int getASCIIPos(const char currentChar)
+{
+    return currentChar - '0';   
 }
 //--
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
@@ -177,7 +319,6 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 
     return true;
 }
-
 //--
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
@@ -267,8 +408,6 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
     
     return true;
 }
-
-
 //Helper function to calculate result of adding or subtracting the mantissa together
 int AddSubtractHelper(int characteristic1, int denominator1, int numerator1, int characteristic2, int denominator2, int numerator2, char sign) {
 
@@ -459,6 +598,117 @@ bool constructResult(int numerator, int denominator, char result[], int len) {
 }
 
 //Functions brought over from Mark Mahoney's version for strong tests
+void testCharacteristicAndMantissa()
+{
+    //number with a non-zero characteristic a decimal point and a non-zero mantissa
+    shouldConvert("123.456", 123, 456, 1000);
+    shouldConvert("    123.456", 123, 456, 1000);
+    shouldConvert("123.456    ", 123, 456, 1000);
+    shouldConvert("    123.456    ", 123, 456, 1000);
+    
+    //unary plus/minus
+    shouldConvert("+123.456", 123, 456, 1000);
+    shouldConvert("   +123.456", 123, 456, 1000);
+    shouldConvert("+123.456   ", 123, 456, 1000);
+    shouldConvert("   +123.456   ", 123, 456, 1000);
+    shouldConvert("-123.456", -123, 456, 1000);
+    shouldConvert("   -123.456", -123, 456, 1000);
+    shouldConvert("-123.456   ", -123, 456, 1000);
+    shouldConvert("    -123.456   ", -123, 456, 1000);
+
+    //number with a zero characteristic and a non-zero mantissa
+    shouldConvert("0.456", 0, 456, 1000);
+    shouldConvert("   0.456", 0, 456, 1000);
+    shouldConvert("0.456   ", 0, 456, 1000);
+    shouldConvert("   0.456   ", 0, 456, 1000);
+    
+    //number with no characteristic digits and a non-zero mantissa
+    shouldConvert(".456", 0, 456, 1000);
+    shouldConvert("    .456", 0, 456, 1000);
+    shouldConvert(".456   ", 0, 456, 1000);
+    shouldConvert("   .456   ", 0, 456, 1000);
+    
+    //number with a non-zero characteristic and no mantissa
+    shouldConvert("0", 0, 0, 10);
+    shouldConvert("-0", -0, 0, 10);
+    shouldConvert("123456", 123456, 0, 10);
+    shouldConvert("   123456", 123456, 0, 10);
+    shouldConvert("123456   ", 123456, 0, 10);
+    shouldConvert("   123456   ", 123456, 0, 10);
+    
+    //unary plus/minus
+    shouldConvert("-123456", -123456, 0, 10);
+    shouldConvert("   -123456", -123456, 0, 10);
+    shouldConvert("-123456   ", -123456, 0, 10);
+    shouldConvert("   -123456   ", -123456, 0, 10);
+    shouldConvert("+123456", 123456, 0, 10);
+    shouldConvert("   +123456", 123456, 0, 10);
+    shouldConvert("+123456   ", 123456, 0, 10);
+    shouldConvert("   +123456   ", 123456, 0, 10);
+
+    //number with a non-zero characteristic and a zero mantissa
+    shouldConvert("123456.0", 123456, 0, 10);
+    shouldConvert("   123456.0", 123456, 0, 10);
+    shouldConvert("123456.0   ", 123456, 0, 10);
+    shouldConvert("   123456.0   ", 123456, 0, 10);
+    
+    //unary plus/minus
+    shouldConvert("-123456.0", -123456, 0, 10);
+    shouldConvert("   -123456.0", -123456, 0, 10);
+    shouldConvert("-123456.0   ", -123456, 0, 10);
+    shouldConvert("   -123456.0   ", -123456, 0, 10);
+    shouldConvert("+123456.0", 123456, 0, 10);
+    shouldConvert("   +123456.0", 123456, 0, 10);
+    shouldConvert("+123456.0   ", 123456, 0, 10);
+    shouldConvert("   +123456.0   ", 123456, 0, 10);
+
+    //check leading and trailing zeros
+    shouldConvert("000123.456", 123, 456, 1000);
+    shouldConvert("123.45600000", 123, 456, 1000);
+    shouldConvert("00000123.45600000", 123, 456, 1000);
+    
+    //unary plus/minus
+    shouldConvert("-000123.456", -123, 456, 1000);
+    shouldConvert("-123.45600000", -123, 456, 1000);
+    shouldConvert("-00000123.45600000", -123, 456, 1000);
+    shouldConvert("+000123.456", 123, 456, 1000);
+    shouldConvert("+123.45600000", 123, 456, 1000);
+    shouldConvert("+00000123.45600000", 123, 456, 1000);
+
+    //significant zeros in mantissa
+    shouldConvert("123.00000456", 123, 456, 100000000);
+    shouldConvert("-123.00000456", -123, 456, 100000000);
+    shouldConvert("+123.00000456", 123, 456, 100000000);
+
+    //these should fail
+    shouldNotConvert("");
+    shouldNotConvert("   ");
+    shouldNotConvert(".");
+    shouldNotConvert("+");
+    shouldNotConvert("-");
+    shouldNotConvert("..");
+    shouldNotConvert("+.");
+    shouldNotConvert("-.");
+    shouldNotConvert("c");
+    shouldNotConvert("cat");
+    shouldNotConvert("-cat");
+    shouldNotConvert("123.");
+    shouldNotConvert("123.   ");
+    shouldNotConvert("123.456+");
+    shouldNotConvert("123.456 +");
+    shouldNotConvert("123.456 cat");
+    shouldNotConvert("123.cat");
+    shouldNotConvert("cat.456");
+    shouldNotConvert("+-123.456");
+    shouldNotConvert("1.23.456");
+    shouldNotConvert(".123.456");
+    shouldNotConvert("--123.456");
+    shouldNotConvert("123   456");
+    shouldNotConvert("123  .  456");
+    shouldNotConvert("  123  .  456");
+    shouldNotConvert("127.0.0.1");
+}
+//--
 void shouldConvert(const char number[], int expectedCharacteristic, int expectedNumerator, int expectedDenominator)
 {
     int c, n, d;
