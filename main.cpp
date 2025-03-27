@@ -2,6 +2,7 @@
 #include <iostream>
 using namespace std;
 
+//Constants for the size of the C-string arrays
 const int SHORT_ARRAY_LENGTH = 5;
 const int MEDIUM_ARRAY_LENGTH = 10;
 const int LARGE_ARRAY_LENGTH = 20;
