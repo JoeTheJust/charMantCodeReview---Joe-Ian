@@ -9,6 +9,10 @@ bool checkValidInput(const char currentChar, const char nextChar, const int pos)
 bool inASCIIRange(const char currentChar);
 int getASCIIPos(const char currentChar);
 
+void testCharacteristicAndMantissa();
+void shouldConvert(const char number[], int expectedCharacteristic, int expectedNumerator, int expectedDenominator);
+void shouldNotConvert(const char number[]);
+
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len); 
 
@@ -17,49 +21,7 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
 
 int main()
 {
-    const char* numbers[] = {
-        //good inputs - 13
-        "123.456",
-        "  123.456",
-        "123.456  ",
-        "-123.456",
-        "+123.456",
-        "-.456",
-        "-0.456",
-        "+.456",
-        "+0.456",
-        "0",
-        "0.0",
-        "0.000000",
-        ".0",
-        //bad inputs - 13
-        "+",
-        "-",
-        "12.34.56",
-        ".-",
-        "+.",
-        "-4.+2 ",
-        "......",
-        "+x",
-        "abc",
-        "abc.1",
-        "1.abc",
-        "1abc",
-        ""
-    };
-    int c, n, d;
-
-    for (int i = 0; i < 26; i++)
-    {
-        if(characteristic(numbers[i], c) && mantissa(numbers[i], n, d))
-        {
-            cout<<"Successful input!"<<endl;
-        }
-        else
-        {
-            cout<<"Error on input!"<<endl;
-        }
-    }
+    testCharacteristicAndMantissa();
 
     return 0;
 } 
@@ -278,3 +240,187 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
     
     return true;
 }
+void testCharacteristicAndMantissa()
+{
+    //number with a non-zero characteristic a decimal point and a non-zero mantissa
+    shouldConvert("123.456", 123, 456, 1000);
+    shouldConvert("    123.456", 123, 456, 1000);
+    shouldConvert("123.456    ", 123, 456, 1000);
+    shouldConvert("    123.456    ", 123, 456, 1000);
+    
+    //unary plus/minus
+    shouldConvert("+123.456", 123, 456, 1000);
+    shouldConvert("   +123.456", 123, 456, 1000);
+    shouldConvert("+123.456   ", 123, 456, 1000);
+    shouldConvert("   +123.456   ", 123, 456, 1000);
+    shouldConvert("-123.456", -123, 456, 1000);
+    shouldConvert("   -123.456", -123, 456, 1000);
+    shouldConvert("-123.456   ", -123, 456, 1000);
+    shouldConvert("    -123.456   ", -123, 456, 1000);
+
+    //number with a zero characteristic and a non-zero mantissa
+    shouldConvert("0.456", 0, 456, 1000);
+    shouldConvert("   0.456", 0, 456, 1000);
+    shouldConvert("0.456   ", 0, 456, 1000);
+    shouldConvert("   0.456   ", 0, 456, 1000);
+    
+    //number with no characteristic digits and a non-zero mantissa
+    shouldConvert(".456", 0, 456, 1000);
+    shouldConvert("    .456", 0, 456, 1000);
+    shouldConvert(".456   ", 0, 456, 1000);
+    shouldConvert("   .456   ", 0, 456, 1000);
+    
+    //number with a non-zero characteristic and no mantissa
+    shouldConvert("0", 0, 0, 10);
+    shouldConvert("-0", -0, 0, 10);
+    shouldConvert("123456", 123456, 0, 10);
+    shouldConvert("   123456", 123456, 0, 10);
+    shouldConvert("123456   ", 123456, 0, 10);
+    shouldConvert("   123456   ", 123456, 0, 10);
+    
+    //unary plus/minus
+    shouldConvert("-123456", -123456, 0, 10);
+    shouldConvert("   -123456", -123456, 0, 10);
+    shouldConvert("-123456   ", -123456, 0, 10);
+    shouldConvert("   -123456   ", -123456, 0, 10);
+    shouldConvert("+123456", 123456, 0, 10);
+    shouldConvert("   +123456", 123456, 0, 10);
+    shouldConvert("+123456   ", 123456, 0, 10);
+    shouldConvert("   +123456   ", 123456, 0, 10);
+
+    //number with a non-zero characteristic and a zero mantissa
+    shouldConvert("123456.0", 123456, 0, 10);
+    shouldConvert("   123456.0", 123456, 0, 10);
+    shouldConvert("123456.0   ", 123456, 0, 10);
+    shouldConvert("   123456.0   ", 123456, 0, 10);
+    
+    //unary plus/minus
+    shouldConvert("-123456.0", -123456, 0, 10);
+    shouldConvert("   -123456.0", -123456, 0, 10);
+    shouldConvert("-123456.0   ", -123456, 0, 10);
+    shouldConvert("   -123456.0   ", -123456, 0, 10);
+    shouldConvert("+123456.0", 123456, 0, 10);
+    shouldConvert("   +123456.0", 123456, 0, 10);
+    shouldConvert("+123456.0   ", 123456, 0, 10);
+    shouldConvert("   +123456.0   ", 123456, 0, 10);
+
+    //check leading and trailing zeros
+    shouldConvert("000123.456", 123, 456, 1000);
+    shouldConvert("123.45600000", 123, 456, 1000);
+    shouldConvert("00000123.45600000", 123, 456, 1000);
+    
+    //unary plus/minus
+    shouldConvert("-000123.456", -123, 456, 1000);
+    shouldConvert("-123.45600000", -123, 456, 1000);
+    shouldConvert("-00000123.45600000", -123, 456, 1000);
+    shouldConvert("+000123.456", 123, 456, 1000);
+    shouldConvert("+123.45600000", 123, 456, 1000);
+    shouldConvert("+00000123.45600000", 123, 456, 1000);
+
+    //significant zeros in mantissa
+    shouldConvert("123.00000456", 123, 456, 100000000);
+    shouldConvert("-123.00000456", -123, 456, 100000000);
+    shouldConvert("+123.00000456", 123, 456, 100000000);
+
+    //these should fail
+    shouldNotConvert("");
+    shouldNotConvert("   ");
+    shouldNotConvert(".");
+    shouldNotConvert("+");
+    shouldNotConvert("-");
+    shouldNotConvert("..");
+    shouldNotConvert("+.");
+    shouldNotConvert("-.");
+    shouldNotConvert("c");
+    shouldNotConvert("cat");
+    shouldNotConvert("-cat");
+    shouldNotConvert("123.");
+    shouldNotConvert("123.   ");
+    shouldNotConvert("123.456+");
+    shouldNotConvert("123.456 +");
+    shouldNotConvert("123.456 cat");
+    shouldNotConvert("123.cat");
+    shouldNotConvert("cat.456");
+    shouldNotConvert("+-123.456");
+    shouldNotConvert("1.23.456");
+    shouldNotConvert(".123.456");
+    shouldNotConvert("--123.456");
+    shouldNotConvert("123   456");
+    shouldNotConvert("123  .  456");
+    shouldNotConvert("  123  .  456");
+    shouldNotConvert("127.0.0.1");
+}
+//--
+void shouldConvert(const char number[], int expectedCharacteristic, int expectedNumerator, int expectedDenominator)
+{
+    int c, n, d;
+
+    //if the conversion from C string to integers can take place
+    if (characteristic(number, c) && mantissa(number, n, d))
+    {
+        if (c == expectedCharacteristic && n == expectedNumerator && d == expectedDenominator)
+        {
+            //test passes, do not print anything on a successful test
+        }
+        else
+        {
+            cout << "Test failed: '" << number << "' "
+                << "was parsed but did not produce the expected results" << endl;
+
+            if (expectedCharacteristic != c)
+            {
+                cout << "expected characteristic: " << expectedCharacteristic << " "
+                    << "actual characteristic: " << c << endl;
+            }
+
+            if (expectedNumerator != n)
+            {
+                cout << "expected numerator: " << expectedNumerator << " "
+                    << "actual numerator: " << n << endl;
+
+            }
+
+            if (expectedDenominator != d)
+            {
+                cout << "expected denominator: " << expectedDenominator << " "
+                    << "actual denominator: " << d << endl;
+            }
+        }
+    }
+    else
+    {
+        cout << "Test failed: '" << number << "' "
+            << "was NOT parsed when it should have been." << endl;
+        if (expectedCharacteristic != c)
+        {
+            cout << "expected characteristic: " << expectedCharacteristic << " "
+                << "actual characteristic: " << c << endl;
+        }
+
+        if (expectedNumerator != n)
+        {
+            cout << "expected numerator: " << expectedNumerator << " "
+                << "actual numerator: " << n << endl;
+
+        }
+
+        if (expectedDenominator != d)
+        {
+            cout << "expected denominator: " << expectedDenominator << " "
+                << "actual denominator: " << d << endl;
+        }
+    }
+}
+//--
+void shouldNotConvert(const char number[])
+{
+    int c, n, d;
+
+    //if the conversion from C string to integers can take place
+    if (characteristic(number, c) && mantissa(number, n, d))
+    {
+        cout << "Test failed: '" << number << "' "
+            << "was parsed when it should NOT have been." << endl;
+    }
+}
+//--
